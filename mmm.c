@@ -10,6 +10,7 @@
 #define K 4096
 #define alpha 1
 #define beta 1
+#define TILE 512
 #define MIN(a,b) (((a)<(b))?(a):(b))
 double A[M][K];
 double B[K][N];
@@ -25,6 +26,7 @@ void init_array()
 {
     int i, j;
 
+    #pragma omp parallel for private(i,j)
     for (i=0; i<N; i++) {
         for (j=0; j<N; j++) {
             A[i][j] = (i + j);
@@ -71,12 +73,12 @@ int main()
 
     /* Code to be optimized - start */
     #pragma omp parallel for private(i,j,k,ii,jj,kk)   
-    for(i=0; i<M; i+=512)		
-        for(k=0; k<K; k+=512)
-	       for(j=0; j<N; j+=512)  
-				for(ii=i; ii<MIN(M,i+512); ii++)		
-					for(kk=k; kk<MIN(K,k+512); kk++)
-						for(jj=j; jj<MIN(N,j+512); jj++)  
+    for(i=0; i<M; i+=TILE)		
+        for(k=0; k<K; k+=TILE)
+	       for(j=0; j<N; j+=TILE)  
+				for(ii=i; ii<MIN(M,i+TILE); ii++)		
+					for(kk=k; kk<MIN(K,k+TILE); kk++)
+						for(jj=j; jj<MIN(N,j+TILE); jj++)  
 							C[ii][jj] = beta*C[ii][jj] + alpha*A[ii][kk] * B[kk][jj];
     /* Code to be optimized - end */
 
