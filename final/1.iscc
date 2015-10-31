@@ -1,0 +1,2 @@
+P := [N] -> { [i,j,k] : 0 <= i,j,k <= N-1 and i+j+k=N };
+card P;
